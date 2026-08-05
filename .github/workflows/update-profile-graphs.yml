@@ -1,0 +1,84 @@
+name: Update profile graphs
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - README.md
+      - .github/workflows/update-profile-graphs.yml
+  schedule:
+    - cron: "17 3 * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: update-profile-graphs
+  cancel-in-progress: true
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+
+    steps:
+      - name: Check out the profile repository
+        uses: actions/checkout@v6
+
+      - name: Generate GitHub stats
+        uses: stats-organization/github-readme-stats-action@v2
+        with:
+          card: stats
+          options: username=${{ github.repository_owner }}&show_icons=true&include_all_commits=true&theme=dracula&locale=en&card_width=350
+          path: profile/stats.svg
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fail_on_error: true
+
+      - name: Generate language stats
+        uses: stats-organization/github-readme-stats-action@v2
+        with:
+          card: top-langs
+          options: username=${{ github.repository_owner }}&layout=compact&langs_count=6&theme=dracula&locale=en&card_width=350
+          path: profile/top-langs.svg
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fail_on_error: true
+
+      - name: Refresh streak and activity graphs
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          download_graph() {
+            local output="$1"
+            local url="$2"
+            local temporary="${output}.tmp"
+
+            if curl --fail --silent --show-error --location \
+              --retry 3 --retry-all-errors --max-time 60 \
+              --output "$temporary" "$url"; then
+              mv "$temporary" "$output"
+            else
+              rm -f "$temporary"
+              if [[ ! -s "$output" ]]; then
+                echo "Could not download $output and no previous graph exists" >&2
+                exit 1
+              fi
+            fi
+          }
+
+          download_graph \
+            profile/streak.svg \
+            "https://streak-stats.demolab.com?user=${{ github.repository_owner }}&theme=dracula&hide_border=false"
+          download_graph \
+            profile/activity.svg \
+            "https://github-readme-activity-graph.vercel.app/graph?username=${{ github.repository_owner }}&theme=dracula&hide_border=false&area=true"
+
+      - name: Commit updated graphs
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add profile/*.svg
+          git diff --staged --quiet || git commit -m "Update profile graphs"
+          git push

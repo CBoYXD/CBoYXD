@@ -24,19 +24,20 @@ let me = Person {
 ## 📊 GitHub Statistics
 
 <div align="center">
-  <img src="https://github-readme-stats.vercel.app/api?username=CBoYXD&hide_title=false&hide_rank=false&show_icons=true&include_all_commits=true&count_private=true&disable_animations=false&theme=dracula&locale=en&hide_border=false&card_width=350" height="165" alt="stats graph" /><img src="https://github-readme-stats.vercel.app/api/top-langs?username=CBoYXD&locale=en&hide_title=false&layout=compact&card_width=350&langs_count=6&theme=dracula&hide_border=false" height="200" alt="languages graph" />
+  <img src="./profile/stats.svg" height="165" alt="GitHub statistics" />
+  <img src="./profile/top-langs.svg" height="165" alt="Most used languages" />
 </div>
 
 <br>
 
 <div align="center">
-  <img src="https://nirzak-streak-stats.vercel.app/?user=CBoYXD&theme=dracula&hide_border=false" alt="GitHub Streak" width="100%" />
+  <img src="./profile/streak.svg" alt="GitHub contribution streak" width="100%" />
 </div>
 
 <br>
 
 <div align="center">
-  <img src="https://github-readme-activity-graph.vercel.app/graph?username=CBoYXD&theme=dracula&hide_border=false&area=true" alt="GitHub Activity Graph" width="100%" />
+  <img src="./profile/activity.svg" alt="GitHub activity graph" width="100%" />
 </div>
 
 <br>
